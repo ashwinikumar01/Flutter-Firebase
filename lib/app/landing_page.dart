@@ -1,17 +1,17 @@
-import 'dart:ffi';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:time_tracker_app/app/home_page.dart';
 import 'package:time_tracker_app/app/sign_in/sign_in_page.dart';
+import 'package:time_tracker_app/services/auth.dart';
 
 class LandingPage extends StatefulWidget {
+  LandingPage({@required this.auth});
+  final AuthBase auth;
   @override
   _LandingPageState createState() => _LandingPageState();
 }
 
 class _LandingPageState extends State<LandingPage> {
-  FirebaseUser _user; // variable
+  User _user; // variable
 
   @override
   void initState() {
@@ -20,11 +20,11 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   Future<void> _checkCurrentUser() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    User user = await widget.auth.currentUser();
     _updateUser(user);
   }
 
-  void _updateUser(FirebaseUser user) {
+  void _updateUser(User user) {
     // parameter is passed
     // print('User id: ${user.uid}');
     setState(() {
@@ -37,10 +37,12 @@ class _LandingPageState extends State<LandingPage> {
     if (_user == null) {
       // at the time of landing page user is null and then we will sign in
       return SignInPage(
+        auth: widget.auth,
         onSignIn: _updateUser,
       );
     }
     return HomePage(
+      auth: widget.auth,
       onSignOut: () => _updateUser(null),
     );
   }
