@@ -5,14 +5,12 @@ import 'package:time_tracker_app/services/auth.dart';
 
 class SignInPage extends StatelessWidget {
   // creates a method for signing anonomously
-  SignInPage({@required this.auth, @required this.onSignIn});
-  final Function(User) onSignIn; // argument-FirebaseUser
+  SignInPage({@required this.auth});
   final AuthBase auth;
 
   Future<void> _signInAnonymously() async {
     try {
-      User user = await auth.signInAnonymously();
-      onSignIn(user);
+      await auth.signInAnonymously();
     } catch (e) {
       print(e.toString());
     }
