@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:time_tracker_app/app/sign_in/validators.dart';
 import 'package:time_tracker_app/common_widgets/form_submit_button.dart';
 import 'package:time_tracker_app/services/auth.dart';
 
 enum EmailSignInFormType { signIn, register }
 
-class EmailSignInForm extends StatefulWidget {
+class EmailSignInForm extends StatefulWidget with EmailAndPasswordvalidator {
   final AuthBase auth;
   EmailSignInForm({@required this.auth});
 
@@ -24,7 +25,12 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
   String get _email => _emailController.text;
   String get _password => _passwordController.text;
+  bool _submitted = false;
+
   void _submit() async {
+    setState(() {
+      _submitted = true;
+    });
     try {
       if (_formType == EmailSignInFormType.signIn) {
         await widget.auth.signInWithEmailAndPassword(_email, _password);
@@ -43,6 +49,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
   void _toggleFormType() {
     setState(() {
+      _submitted = false;
       _formType = _formType == EmailSignInFormType.signIn
           ? EmailSignInFormType.register
           : EmailSignInFormType.signIn;
@@ -60,7 +67,10 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         ? 'Need an account ? Register'
         : 'Have an account ? Sign in';
 
-    bool submitEnabled = _email.isNotEmpty && _password.isNotEmpty;
+    // bool submitEnabled = _email.isNotEmpty && _password.isNotEmpty;
+
+    bool submitEnabled = widget.emailvalidator.isValid(_email) &&
+        widget.passwordvalidator.isValid(_password);
 
     return [
       Flexible(
@@ -90,11 +100,16 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   }
 
   TextField _buildEmailTextField() {
+    // bool emailValid = widget.emailvalidator.isValid(_email);
+    bool showErrorText = _submitted && !widget.emailvalidator.isValid(_email);
     return TextField(
       focusNode: _emailFocusNode,
       controller: _emailController,
-      decoration:
-          InputDecoration(labelText: 'Email', hintText: 'test@test.com'),
+      decoration: InputDecoration(
+        labelText: 'Email',
+        hintText: 'test@test.com',
+        errorText: showErrorText ? widget.invalidEmailErrorText : null,
+      ),
       autocorrect: false,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
@@ -104,11 +119,14 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   }
 
   TextField _buildPasswordTextField() {
+    bool showErrorText =
+        _submitted && !widget.passwordvalidator.isValid(_password);
     return TextField(
       focusNode: _passwordFocusNode,
       controller: _passwordController,
       decoration: InputDecoration(
         labelText: 'Password',
+        errorText: showErrorText ? widget.invalidPasswordErrorText : null,
       ),
       textInputAction: TextInputAction.done,
       keyboardType: TextInputType.visiblePassword,
