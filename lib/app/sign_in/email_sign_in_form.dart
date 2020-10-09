@@ -26,10 +26,12 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   String get _email => _emailController.text;
   String get _password => _passwordController.text;
   bool _submitted = false;
+  bool _isLoading = false;
 
   void _submit() async {
     setState(() {
       _submitted = true;
+      _isLoading = true;
     });
     try {
       if (_formType == EmailSignInFormType.signIn) {
@@ -40,11 +42,20 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       Navigator.pop(context);
     } catch (e) {
       print(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
+  // if user hasn't filled the email and click next then next(typing keyboard) is disabled
   void _emailEditingComplete() {
-    FocusScope.of(context).requestFocus(_passwordFocusNode);
+    final newFocus = widget.emailvalidator.isValid(_email)
+        ? _passwordFocusNode
+        : _emailFocusNode;
+    // FocusScope.of(context).requestFocus(_passwordFocusNode);
+    FocusScope.of(context).requestFocus(newFocus);
   }
 
   void _toggleFormType() {
@@ -92,9 +103,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       ),
       FlatButton(
         child: Text(secondaryText),
-        onPressed: () {
-          _toggleFormType();
-        },
+        onPressed: !_isLoading ? _toggleFormType : null,
       ),
     ];
   }
@@ -109,6 +118,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         labelText: 'Email',
         hintText: 'test@test.com',
         errorText: showErrorText ? widget.invalidEmailErrorText : null,
+        enabled: _isLoading == false,
       ),
       autocorrect: false,
       keyboardType: TextInputType.emailAddress,
@@ -119,14 +129,16 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   }
 
   TextField _buildPasswordTextField() {
-    bool showErrorText =
-        _submitted && !widget.passwordvalidator.isValid(_password);
+    bool showErrorText = _submitted &&
+        !widget.passwordvalidator.isValid(_password) &&
+        !_isLoading;
     return TextField(
       focusNode: _passwordFocusNode,
       controller: _passwordController,
       decoration: InputDecoration(
         labelText: 'Password',
         errorText: showErrorText ? widget.invalidPasswordErrorText : null,
+        enabled: _isLoading == false,
       ),
       textInputAction: TextInputAction.done,
       keyboardType: TextInputType.visiblePassword,
