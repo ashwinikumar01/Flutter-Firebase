@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:time_tracker_app/app/sign_in/sign_in_button.dart';
 import 'package:time_tracker_app/app/sign_in/social_sign_in_button.dart';
@@ -21,6 +19,14 @@ class SignInPage extends StatelessWidget {
   Future<void> _signInWithGoogle() async {
     try {
       await auth.signInWithGoogle();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> _signInWithFacebook() async {
+    try {
+      await auth.signInWithFacebook();
     } catch (e) {
       print(e.toString());
     }
@@ -69,7 +75,9 @@ class SignInPage extends StatelessWidget {
             assetName: 'assets/facebook-logo.png',
             text: 'Sign in with Facebook',
             textColor: Colors.white,
-            onPressed: () {},
+            onPressed: () {
+              _signInWithFacebook();
+            },
             color: Color(0xFF334D92),
           ),
           SizedBox(height: 9.0),
