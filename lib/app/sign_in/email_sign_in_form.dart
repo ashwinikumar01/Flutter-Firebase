@@ -16,6 +16,8 @@ class EmailSignInForm extends StatefulWidget {
 class _EmailSignInFormState extends State<EmailSignInForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
   /*default value*/
   EmailSignInFormType _formType = EmailSignInFormType.signIn;
@@ -33,6 +35,10 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  void _emailEditingComplete() {
+    FocusScope.of(context).requestFocus(_passwordFocusNode);
   }
 
   void _toggleFormType() {
@@ -54,37 +60,23 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         ? 'Need an account ? Register'
         : 'Have an account ? Sign in';
 
+    bool submitEnabled = _email.isNotEmpty && _password.isNotEmpty;
+
     return [
       Flexible(
-        child: TextField(
-          controller: _emailController,
-          decoration:
-              InputDecoration(labelText: 'Email', hintText: 'test@test.com'),
-          autocorrect: false,
-          keyboardType: TextInputType.emailAddress,
-          textInputAction: TextInputAction.next,
-        ),
+        child: _buildEmailTextField(),
       ),
       SizedBox(
         height: 8.0,
       ),
-      TextField(
-        controller: _passwordController,
-        decoration: InputDecoration(
-          labelText: 'Password',
-        ),
-        textInputAction: TextInputAction.done,
-        keyboardType: TextInputType.visiblePassword,
-        obscureText: true,
-      ),
+      _buildPasswordTextField(),
       SizedBox(
         height: 30.0,
       ),
       FormSubmitButton(
-          text: primaryText,
-          onPressed: () {
-            _submit();
-          }),
+        text: primaryText,
+        onPressed: submitEnabled ? _submit : null,
+      ),
       SizedBox(
         height: 8.0,
       ),
@@ -97,6 +89,35 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     ];
   }
 
+  TextField _buildEmailTextField() {
+    return TextField(
+      focusNode: _emailFocusNode,
+      controller: _emailController,
+      decoration:
+          InputDecoration(labelText: 'Email', hintText: 'test@test.com'),
+      autocorrect: false,
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      onChanged: (email) => _updateState(),
+      onEditingComplete: _emailEditingComplete,
+    );
+  }
+
+  TextField _buildPasswordTextField() {
+    return TextField(
+      focusNode: _passwordFocusNode,
+      controller: _passwordController,
+      decoration: InputDecoration(
+        labelText: 'Password',
+      ),
+      textInputAction: TextInputAction.done,
+      keyboardType: TextInputType.visiblePassword,
+      obscureText: true,
+      onChanged: (password) => _updateState(),
+      onEditingComplete: _submit,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -107,5 +128,10 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         children: _buildChildren(),
       ),
     );
+  }
+
+  void _updateState() {
+    print('email: $_email, password: $_password');
+    setState(() {});
   }
 }
