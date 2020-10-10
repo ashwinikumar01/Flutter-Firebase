@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker_app/common_widgets/platform_alert_dialog.dart';
 import 'package:time_tracker_app/services/auth.dart';
-import 'package:time_tracker_app/services/auth_provider.dart';
 
 class HomePage extends StatelessWidget {
   Future<void> _signOut(BuildContext context) async {
     try {
-      final auth = AuthProvider.of(context);
+      final auth = Provider.of<AuthBase>(context);
       await auth.signOut(); //calling from services
     } catch (e) {
       print(e.toString());
@@ -29,7 +29,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        centerTitle: true,
+        title: Text(
+          'Home Page',
+        ),
         actions: <Widget>[
           FlatButton(
             onPressed: () {
