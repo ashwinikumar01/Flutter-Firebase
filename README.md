@@ -1,4 +1,4 @@
-# time_tracker_app
+# Google,Facebook,Email and Anonymous Login
 
 A new Flutter project.
 
