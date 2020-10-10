@@ -7,8 +7,13 @@ import 'package:time_tracker_app/app/sign_in/social_sign_in_button.dart';
 import 'package:time_tracker_app/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:time_tracker_app/services/auth.dart';
 
-class SignInPage extends StatelessWidget {
-  // creates a method for signing anonomously
+class SignInPage extends StatefulWidget {
+  @override
+  _SignInPageState createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  bool _isLoading = false;
 
   void _showSignInError(BuildContext context, PlatformException exception) {
     PlatformExceptionAlertDialog(title: 'Sign in failed', exception: exception)
@@ -17,36 +22,43 @@ class SignInPage extends StatelessWidget {
 
   Future<void> _signInAnonymously(BuildContext context) async {
     try {
+      setState(() => _isLoading = true);
       final auth = Provider.of<AuthBase>(context);
       await auth.signInAnonymously();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
+      setState(() => _isLoading = true);
       final auth = Provider.of<AuthBase>(context);
-
       await auth.signInWithGoogle();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
+      setState(() => _isLoading = true);
       final auth = Provider.of<AuthBase>(context);
-
       await auth.signInWithFacebook();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -78,32 +90,21 @@ class SignInPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
-            'Sign In',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 32.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          SizedBox(height: 50.0, child: _buildHeader()),
           SizedBox(height: 48.0),
           SocialSignInButton(
             assetName: 'assets/google-logo.png',
             text: 'Sign in with Google',
             textColor: Colors.black87,
             color: Colors.white,
-            onPressed: () {
-              _signInWithGoogle(context);
-            },
+            onPressed: _isLoading ? null : () => _signInWithGoogle(context),
           ),
           SizedBox(height: 9.0),
           SocialSignInButton(
             assetName: 'assets/facebook-logo.png',
             text: 'Sign in with Facebook',
             textColor: Colors.white,
-            onPressed: () {
-              _signInWithFacebook(context);
-            },
+            onPressed: _isLoading ? null : () => _signInWithFacebook(context),
             color: Color(0xFF334D92),
           ),
           SizedBox(height: 9.0),
@@ -111,9 +112,7 @@ class SignInPage extends StatelessWidget {
             assetName: 'assets/email.png',
             text: 'Sign in with email',
             textColor: Colors.white,
-            onPressed: () {
-              _signInWithEmail(context);
-            },
+            onPressed: _isLoading ? null : () => _signInWithEmail(context),
             color: Colors.teal[700],
           ),
           SizedBox(height: 9.0),
@@ -126,12 +125,29 @@ class SignInPage extends StatelessWidget {
           SignInButton(
             text: 'Go anonymous',
             textColor: Colors.black87,
-            onPressed: () {
-              _signInAnonymously(context); // we can use a fat hand arrow too
-            },
+            onPressed: _isLoading
+                ? null
+                : () => _signInAnonymously(
+                    context), // we can use a fat hand arrow too
             color: Colors.lime[300],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return Text(
+      'Sign In',
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 32.0,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
