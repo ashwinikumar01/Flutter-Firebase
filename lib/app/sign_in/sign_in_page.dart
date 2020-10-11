@@ -14,8 +14,9 @@ class SignInPage extends StatelessWidget {
   const SignInPage({Key key, this.bloc}) : super(key: key);
 
   static Widget create(BuildContext context) {
+    final auth = Provider.of<AuthBase>(context);
     return Provider<SignInBloc>(
-      create: (context) => SignInBloc(),
+      create: (context) => SignInBloc(auth: auth),
       dispose: (context, bloc) => bloc.dispose(),
       child: Consumer<SignInBloc>(
           builder: (context, bloc, _) => SignInPage(
@@ -34,45 +35,33 @@ class SignInPage extends StatelessWidget {
   Future<void> _signInAnonymously(BuildContext context) async {
     // final bloc = Provider.of<SignInBloc>(context);
     try {
-      bloc.setIsLoading(true);
-      final auth = Provider.of<AuthBase>(context);
-      await auth.signInAnonymously();
+      await bloc.signInAnonymously();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
-    } finally {
-      bloc.setIsLoading(false);
     }
   }
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     // final bloc = Provider.of<SignInBloc>(context);
     try {
-      bloc.setIsLoading(true);
-      final auth = Provider.of<AuthBase>(context);
-      await auth.signInWithGoogle();
+      await bloc.signInWithGoogle();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
-    } finally {
-      bloc.setIsLoading(false);
     }
   }
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     // final bloc = Provider.of<SignInBloc>(context);
     try {
-      bloc.setIsLoading(true);
-      final auth = Provider.of<AuthBase>(context);
-      await auth.signInWithFacebook();
+      await bloc.signInWithFacebook();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
-    } finally {
-      bloc.setIsLoading(false);
     }
   }
 
