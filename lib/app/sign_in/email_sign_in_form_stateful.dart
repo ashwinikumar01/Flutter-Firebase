@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:time_tracker_app/app/sign_in/email_sign_in_model.dart';
 import 'package:time_tracker_app/app/sign_in/validators.dart';
 import 'package:time_tracker_app/common_widgets/form_submit_button.dart';
-import 'package:time_tracker_app/common_widgets/platform_alert_dialog.dart';
 import 'package:time_tracker_app/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:time_tracker_app/services/auth.dart';
 
-enum EmailSignInFormType { signIn, register }
-
-class EmailSignInForm extends StatefulWidget with EmailAndPasswordvalidator {
+class EmailSignInFormStateful extends StatefulWidget
+    with EmailAndPasswordvalidator {
   @override
-  _EmailSignInFormState createState() => _EmailSignInFormState();
+  _EmailSignInFormStatefulState createState() =>
+      _EmailSignInFormStatefulState();
 }
 
-class _EmailSignInFormState extends State<EmailSignInForm> {
+class _EmailSignInFormStatefulState extends State<EmailSignInFormStateful> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
@@ -35,32 +35,6 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
-  }
-
-  void _submit() async {
-    setState(() {
-      _submitted = true;
-      _isLoading = true;
-    });
-    try {
-      final auth = Provider.of<AuthBase>(context);
-      if (_formType == EmailSignInFormType.signIn) {
-        await auth.signInWithEmailAndPassword(_email, _password);
-      } else {
-        await auth.createUserWithEmailAndPassword(_email, _password);
-      }
-      Navigator.pop(context);
-    } on PlatformException catch (e) {
-      print(e.toString());
-      PlatformExceptionAlertDialog(
-        title: 'Sign In Failed',
-        exception: e,
-      ).show(context);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   // if user hasn't filled the email and click next then next(typing keyboard) is disabled
