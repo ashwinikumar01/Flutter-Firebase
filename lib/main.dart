@@ -10,8 +10,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final signInPage = SignInPage();   instance of SignInPage()
-    // signInPage.buildContent();
 
     return Provider<AuthBase>(
       create: (context) => Auth(),

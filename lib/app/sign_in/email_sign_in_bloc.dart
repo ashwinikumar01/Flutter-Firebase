@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:time_tracker_app/app/sign_in/email_sign_in_model.dart';
-import 'package:time_tracker_app/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:time_tracker_app/services/auth.dart';
 
 class EmailSignInBloc {
-  final AuthBase auth;
   EmailSignInBloc({@required this.auth});
+  final AuthBase auth;
 
   final StreamController<EmailSignInModel> _modelController =
       StreamController<EmailSignInModel>();
@@ -21,12 +18,7 @@ class EmailSignInBloc {
 
   Future<void> submit() async {
     updateWith(submitted: true, isLoading: true);
-    // setState(() {
-    //   _submitted = true;
-    //   _isLoading = true;
-    // });
     try {
-      // final auth = Provider.of<AuthBase>(context);
       if (_model.formType == EmailSignInFormType.signIn) {
         await auth.signInWithEmailAndPassword(_model.email, _model.password);
       } else {
@@ -34,21 +26,36 @@ class EmailSignInBloc {
             _model.email, _model.password);
       }
     } catch (e) {
+      updateWith(isLoading: false);
       rethrow;
-    } finally {
-      updateWith(submitted: true, isLoading: true);
-      // setState(() {
-      //   _isLoading = false;
-      // });
     }
   }
 
-  void updateWith(
-      {String email,
-      String password,
-      EmailSignInFormType formType,
-      bool isLoading,
-      bool submitted}) {
+  void toggleFormType() {
+    final formType = _model.formType == EmailSignInFormType.signIn
+        ? EmailSignInFormType.register
+        : EmailSignInFormType.signIn;
+    updateWith(
+      email: '',
+      password: '',
+      formType: formType,
+      isLoading: false,
+      submitted: false,
+    );
+  }
+
+  void updateEmail(String email) => updateWith(email: email);
+
+  void updatePassword(String password) => updateWith(password: password);
+
+  void updateWith({
+    String email,
+    String password,
+    EmailSignInFormType formType,
+    bool isLoading,
+    bool submitted,
+  }) {
+    // update model
     _model = _model.copyWith(
       email: email,
       password: password,
@@ -56,6 +63,7 @@ class EmailSignInBloc {
       isLoading: isLoading,
       submitted: submitted,
     );
+    // add updated model to _modelController
     _modelController.add(_model);
   }
 }
