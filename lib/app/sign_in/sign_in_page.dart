@@ -10,8 +10,9 @@ import 'package:time_tracker_app/services/auth.dart';
 
 class SignInPage extends StatelessWidget {
   final SignInBloc bloc;
+  final bool isLoading;
 
-  const SignInPage({Key key, this.bloc}) : super(key: key);
+  SignInPage({@required this.bloc, @required this.isLoading});
 
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context);
@@ -23,6 +24,7 @@ class SignInPage extends StatelessWidget {
           child: Consumer<SignInBloc>(
               builder: (context, bloc, _) => SignInPage(
                     bloc: bloc,
+                    isLoading: isLoading.value,
                   )),
         ),
       ),
@@ -79,7 +81,7 @@ class SignInPage extends StatelessWidget {
   }
 
   Widget build(BuildContext context) {
-    final isLoading = Provider.of<ValueNotifier<bool>>(context);
+    // final isLoading = Provider.of<ValueNotifier<bool>>(context);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -87,18 +89,18 @@ class SignInPage extends StatelessWidget {
         centerTitle: true,
         elevation: 2.0,
       ),
-      body: _buildContent(context, isLoading.value),
+      body: _buildContent(context),
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isLoading) {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SizedBox(height: 50.0, child: _buildHeader(isLoading)),
+          SizedBox(height: 50.0, child: _buildHeader()),
           SizedBox(height: 48.0),
           SocialSignInButton(
             assetName: 'assets/google-logo.png',
@@ -144,7 +146,7 @@ class SignInPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(bool isLoading) {
+  Widget _buildHeader() {
     if (isLoading) {
       return Center(
         child: CircularProgressIndicator(),
