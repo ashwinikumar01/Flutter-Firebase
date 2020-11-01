@@ -15,13 +15,17 @@ class SignInPage extends StatelessWidget {
 
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context);
-    return Provider<SignInBloc>(
-      create: (context) => SignInBloc(auth: auth),
-      dispose: (context, bloc) => bloc.dispose(),
-      child: Consumer<SignInBloc>(
-          builder: (context, bloc, _) => SignInPage(
-                bloc: bloc,
-              )),
+    return ChangeNotifierProvider<ValueNotifier<bool>>(
+      create: (_) => ValueNotifier<bool>(false),
+      child: Consumer<ValueNotifier<bool>>(
+        builder: (_, isLoading, __) => Provider<SignInBloc>(
+          create: (context) => SignInBloc(auth: auth, isLoading: isLoading),
+          child: Consumer<SignInBloc>(
+              builder: (context, bloc, _) => SignInPage(
+                    bloc: bloc,
+                  )),
+        ),
+      ),
     );
   }
 
@@ -75,7 +79,7 @@ class SignInPage extends StatelessWidget {
   }
 
   Widget build(BuildContext context) {
-    // final bloc = Provider.of<SignInBloc>(context);
+    final isLoading = Provider.of<ValueNotifier<bool>>(context);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -83,12 +87,7 @@ class SignInPage extends StatelessWidget {
         centerTitle: true,
         elevation: 2.0,
       ),
-      body: StreamBuilder<bool>(
-          stream: bloc.isLoadingStream,
-          initialData: false,
-          builder: (context, snapshot) {
-            return _buildContent(context, snapshot.data);
-          }),
+      body: _buildContent(context, isLoading.value),
     );
   }
 

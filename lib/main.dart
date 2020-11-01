@@ -10,10 +10,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Provider<AuthBase>(
       create: (context) => Auth(),
-      // auth: Auth(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Time Tracker App',

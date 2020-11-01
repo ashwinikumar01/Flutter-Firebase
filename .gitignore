@@ -15,3 +15,5 @@ android/app/google-services.json
 .flutter-plugins-dependencies
 android/time_tracker_app_android.iml
 time_tracker_app.iml
+google-services.json
+*build.gradle

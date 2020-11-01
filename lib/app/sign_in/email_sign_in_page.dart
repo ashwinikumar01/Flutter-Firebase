@@ -13,8 +13,10 @@ class EmailSignInPage extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Card(
-          child: EmailSignInFormBlocBased.create(context),
+        child: SingleChildScrollView(
+          child: Card(
+            child: EmailSignInFormBlocBased.create(context),
+          ),
         ),
       ),
     );

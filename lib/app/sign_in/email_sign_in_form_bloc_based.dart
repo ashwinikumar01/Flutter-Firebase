@@ -126,6 +126,7 @@ class _EmailSignInFormBlocBasedState extends State<EmailSignInFormBlocBased> {
         initialData: EmailSignInModel(),
         builder: (context, snapshot) {
           final EmailSignInModel model = snapshot.data;
+          print('email:${model.email}');
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
