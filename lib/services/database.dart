@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 import 'package:time_tracker_app/app/home/models/job.dart';
+import 'package:time_tracker_app/services/api_path.dart';
 
 // created dynamically
 abstract class Database {
@@ -13,7 +14,7 @@ class FirestoreDatabase implements Database {
 
   // setData returns a Future
   Future<void> createJob(Job job) async {
-    final path = '/users/$uid/jobs/job_abc';
+    final path = APIPath.job(uid, 'job_abc');
     final documentReference = Firestore.instance.document(path);
     await documentReference.setData(job.toMap());
   }
