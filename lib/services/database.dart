@@ -13,12 +13,34 @@ class FirestoreDatabase implements Database {
   FirestoreDatabase({@required this.uid}) : assert(uid != null);
 
   // setData returns a Future
-  Future<void> createJob(Job job) async {
-    final path = APIPath.job(uid, 'job_abc');
-    final documentReference = Firestore.instance.document(path);
-    await documentReference.setData(job.toMap());
+  Future<void> createJob(Job job) async => await _setData(
+        path: APIPath.job(uid, 'job_abc'),
+        data: job.toMap(),
+      );
+
+  Future<void> _setData({String path, Map<String, dynamic> data}) async {
+    final reference = Firestore.instance.document(path);
+    print('$path: $data');
+    await reference.setData(data);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // created by user
 // abstract class Database {
@@ -29,7 +51,7 @@ class FirestoreDatabase implements Database {
 //   final String uid;
 //   FirestoreDatabase({@required this.uid}) : assert(uid != null);
 
-//   // setData returns a Future
+// setData returns a Future
 //   Future<void> createJob(Map<String, dynamic> jobData) async {
 //     final path = '/users/$uid/jobs/job_abc';
 //     final documentReference = Firestore.instance.document(path);

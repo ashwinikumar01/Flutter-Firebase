@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker_app/app/home/models/job.dart';
 import 'package:time_tracker_app/common_widgets/platform_alert_dialog.dart';
+import 'package:time_tracker_app/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:time_tracker_app/services/auth.dart';
 import 'package:time_tracker_app/services/database.dart';
 
@@ -28,11 +30,18 @@ class JobsPage extends StatelessWidget {
   }
 
   Future<void> _createJob(BuildContext context) async {
-    final database = Provider.of<Database>(context, listen: false);
-    await database.createJob(Job(
-      name: 'John',
-      ratePerHour: 40,
-    ));
+    try {
+      final database = Provider.of<Database>(context, listen: false);
+      await database.createJob(Job(
+        name: 'Johnny',
+        ratePerHour: 40,
+      ));
+    } on PlatformException catch (e) {
+      PlatformExceptionAlertDialog(
+        title: 'Operation failed',
+        exception: e,
+      ).show(context);
+    }
   }
 
   // Future<void> _createJob(BuildContext context) async {

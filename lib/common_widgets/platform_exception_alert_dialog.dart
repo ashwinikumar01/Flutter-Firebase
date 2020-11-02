@@ -12,6 +12,12 @@ class PlatformExceptionAlertDialog extends PlatformAlertDialog {
         );
 
   static String _messsage(PlatformException exception) {
+    print(exception);
+    if (exception.message == 'FIRFirestoreErrorDomain') {
+      if (exception.code == 'ERROR 7') {
+        return 'Missing or insufficient permissions';
+      }
+    }
     return _errors[exception.code] ?? exception.message;
   }
 
