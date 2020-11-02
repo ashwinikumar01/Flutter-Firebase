@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 import 'package:time_tracker_app/app/home/models/job.dart';
 import 'package:time_tracker_app/services/api_path.dart';
+import 'package:time_tracker_app/services/firestore_service.dart';
 
 // created dynamically
 abstract class Database {
@@ -13,28 +13,15 @@ class FirestoreDatabase implements Database {
   final String uid;
   FirestoreDatabase({@required this.uid}) : assert(uid != null);
 
-  // setData returns a Future
-  Future<void> createJob(Job job) async => await _setData(
+  final _service = FirestoreService();
+  Future<void> createJob(Job job) async => await _service.setData(
         path: APIPath.job(uid, 'job_abc'),
         data: job.toMap(),
       );
 
   // converting into list of jobs
-  Stream<List<Job>> jobsStream() {
-    final path = APIPath.jobs(uid);
-    final reference = Firestore.instance.collection(path);
-    final snapshots = reference.snapshots();
-    return snapshots.map((snapshot) => snapshot.documents.map((snapshot) => Job(
-          name: snapshot.data['name'],
-          ratePerHour: snapshot.data['ratePerHour'],
-        )));
-  }
-
-  Future<void> _setData({String path, Map<String, dynamic> data}) async {
-    final reference = Firestore.instance.document(path);
-    print('$path: $data');
-    await reference.setData(data);
-  }
+  Stream<List<Job>> jobsStream() => _service.collectionStream(
+      path: APIPath.jobs(uid), builder: (data) => Job.fromMap(data));
 }
 
 // created by user

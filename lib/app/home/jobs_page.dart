@@ -32,10 +32,12 @@ class JobsPage extends StatelessWidget {
   Future<void> _createJob(BuildContext context) async {
     try {
       final database = Provider.of<Database>(context, listen: false);
-      await database.createJob(Job(
-        name: 'Johnny',
-        ratePerHour: 40,
-      ));
+      await database.createJob(
+        Job(
+          name: 'Blogging',
+          ratePerHour: 20,
+        ),
+      );
     } on PlatformException catch (e) {
       PlatformExceptionAlertDialog(
         title: 'Operation failed',
@@ -43,14 +45,6 @@ class JobsPage extends StatelessWidget {
       ).show(context);
     }
   }
-
-  // Future<void> _createJob(BuildContext context) async {
-  //   final database = Provider.of<Database>(context, listen: false);
-  //   await database.createJob({
-  //     'name': 'Blogging',
-  //     'ratePerHour': 2,
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -93,8 +87,19 @@ class JobsPage extends StatelessWidget {
           final children = jobs.map((job) => Text(job.name)).toList();
           return ListView(children: children);
         }
+        if (snapshot.hasError) {
+          return Center(child: Text('Some error occured'));
+        }
         return Center(child: CircularProgressIndicator());
       },
     );
   }
 }
+
+// Future<void> _createJob(BuildContext context) async {
+//   final database = Provider.of<Database>(context, listen: false);
+//   await database.createJob({
+//     'name': 'Blogging',
+//     'ratePerHour': 2,
+//   });
+// }
