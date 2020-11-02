@@ -6,6 +6,7 @@ import 'package:time_tracker_app/services/api_path.dart';
 // created dynamically
 abstract class Database {
   Future<void> createJob(Job job);
+  Stream<List<Job>> jobsStream();
 }
 
 class FirestoreDatabase implements Database {
@@ -18,29 +19,23 @@ class FirestoreDatabase implements Database {
         data: job.toMap(),
       );
 
+  // converting into list of jobs
+  Stream<List<Job>> jobsStream() {
+    final path = APIPath.jobs(uid);
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.snapshots();
+    return snapshots.map((snapshot) => snapshot.documents.map((snapshot) => Job(
+          name: snapshot.data['name'],
+          ratePerHour: snapshot.data['ratePerHour'],
+        )));
+  }
+
   Future<void> _setData({String path, Map<String, dynamic> data}) async {
     final reference = Firestore.instance.document(path);
     print('$path: $data');
     await reference.setData(data);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // created by user
 // abstract class Database {
