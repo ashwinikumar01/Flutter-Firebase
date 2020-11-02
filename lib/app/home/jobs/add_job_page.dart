@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker_app/app/home/models/job.dart';
+import 'package:time_tracker_app/common_widgets/platform_alert_dialog.dart';
 import 'package:time_tracker_app/common_widgets/platform_exception_alert_dialog.dart';
 
 import 'package:time_tracker_app/services/database.dart';
@@ -47,9 +48,18 @@ class _AddJobPageState extends State<AddJobPage> {
     if (_validateAndSaveForm()) {
       try {
         final jobs = await widget.database.jobsStream().first;
-        final job = Job(name: _name, ratePerHour: _ratePerHour);
-        await widget.database.createJob(job);
-        Navigator.of(context).pop();
+        final allNames = jobs.map((job) => job.name).toList();
+        if (allNames.contains(_name)) {
+          PlatformAlertDialog(
+            title: 'Name already used',
+            content: 'Please choose a different job name',
+            defaultActionText: 'OK',
+          ).show(context);
+        } else {
+          final job = Job(name: _name, ratePerHour: _ratePerHour);
+          await widget.database.createJob(job);
+          Navigator.of(context).pop();
+        }
       } on PlatformException catch (e) {
         PlatformExceptionAlertDialog(
           title: 'Operation Failed',
@@ -116,7 +126,7 @@ class _AddJobPageState extends State<AddJobPage> {
         decoration: InputDecoration(labelText: 'Rate per hour'),
         validator: (value) =>
             value.isNotEmpty ? null : 'RatePerHour can\ t be empty',
-        onSaved: (value) => _ratePerHour = int.parse(value) ?? 0,
+        onSaved: (value) => _ratePerHour = int.tryParse(value) ?? 0,
         keyboardType: TextInputType.numberWithOptions(
           signed: false,
           decimal: false,
