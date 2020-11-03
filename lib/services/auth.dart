@@ -48,6 +48,21 @@ class Auth implements AuthBase {
   }
 
   @override
+  Future<User> signInWithEmailAndPassword(String email, String password) async {
+    final authResult = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+    return _userFromFirebase(authResult.user);
+  }
+
+  @override
+  Future<User> createUserWithEmailAndPassword(
+      String email, String password) async {
+    final authResult = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    return _userFromFirebase(authResult.user);
+  }
+
+  @override
   Future<User> signInWithGoogle() async {
     final googleSignIn = GoogleSignIn();
     final googleAccount = await googleSignIn.signIn();
@@ -63,20 +78,24 @@ class Auth implements AuthBase {
         return _userFromFirebase(authResult.user);
       } else {
         throw PlatformException(
-            code: 'ERROR_MISSING_GGOGLE_AUTH_TOKEN',
-            message: 'Missing Google Auth token');
+          code: 'ERROR_MISSING_GOOGLE_AUTH_TOKEN',
+          message: 'Missing Google Auth Token',
+        );
       }
     } else {
       throw PlatformException(
-          code: 'ERROR_ABORTED_BY_USER', message: 'Sign in aborted by user');
+        code: 'ERROR_ABORTED_BY_USER',
+        message: 'Sign in aborted by user',
+      );
     }
   }
 
   @override
   Future<User> signInWithFacebook() async {
     final facebookLogin = FacebookLogin();
-    final result =
-        await facebookLogin.logInWithReadPermissions(['public_profile']);
+    final result = await facebookLogin.logInWithReadPermissions(
+      ['public_profile'],
+    );
     if (result.accessToken != null) {
       final authResult = await _firebaseAuth.signInWithCredential(
         FacebookAuthProvider.getCredential(
@@ -86,31 +105,18 @@ class Auth implements AuthBase {
       return _userFromFirebase(authResult.user);
     } else {
       throw PlatformException(
-          code: 'ERROR_ABORTED_BY_USER', message: 'Sign in aborted by user');
+        code: 'ERROR_ABORTED_BY_USER',
+        message: 'Sign in aborted by user',
+      );
     }
-  }
-
-  @override
-  Future<User> signInWithEmailAndPassword(String email, String password) async {
-    final authResult = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
-  }
-
-  @override
-  Future<User> createUserWithEmailAndPassword(
-      String email, String password) async {
-    final authResult = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
   }
 
   @override
   Future<void> signOut() async {
     final googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
-
     final facebookLogin = FacebookLogin();
     await facebookLogin.logOut();
-
     await _firebaseAuth.signOut();
   }
 }
