@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +55,13 @@ class JobsPage extends StatelessWidget {
           'Jobs',
         ),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add, color: Colors.white),
+            onPressed: () => EditJobPage.show(
+              context,
+              database: Provider.of<Database>(context),
+            ),
+          ),
           FlatButton(
             onPressed: () {
               _confirmSignOut(context);
@@ -67,11 +75,6 @@ class JobsPage extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () =>
-            EditJobPage.show(context, database: Provider.of<Database>(context)),
       ),
       body: _buildContents(context),
     );
