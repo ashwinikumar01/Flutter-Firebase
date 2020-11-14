@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:meta/meta.dart';
 import 'package:time_tracker_app/app/home/models/entry.dart';
 import 'package:time_tracker_app/app/home/models/job.dart';
