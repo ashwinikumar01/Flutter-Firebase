@@ -7,33 +7,10 @@ import 'package:time_tracker_app/app/home/jobs/edit_job_page.dart';
 import 'package:time_tracker_app/app/home/jobs/job_list_tile.dart';
 import 'package:time_tracker_app/app/home/jobs/list_items_builder.dart';
 import 'package:time_tracker_app/app/home/models/job.dart';
-import 'package:time_tracker_app/common_widgets/platform_alert_dialog.dart';
 import 'package:time_tracker_app/common_widgets/platform_exception_alert_dialog.dart';
-import 'package:time_tracker_app/services/auth.dart';
 import 'package:time_tracker_app/services/database.dart';
 
 class JobsPage extends StatelessWidget {
-  Future<void> _signOut(BuildContext context) async {
-    try {
-      final auth = Provider.of<AuthBase>(context);
-      await auth.signOut(); //calling from services
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  Future<void> _confirmSignOut(BuildContext context) async {
-    final didRequestSignOut = await PlatformAlertDialog(
-      title: 'Logout',
-      content: 'Are you sure youy want to logout ?',
-      defaultActionText: 'Logout',
-      cancelActionText: 'Cancel',
-    ).show(context);
-    if (didRequestSignOut == true) {
-      _signOut(context);
-    }
-  }
-
   Future<void> _delete(BuildContext context, Job job) async {
     try {
       final database = Provider.of<Database>(context);
@@ -50,28 +27,16 @@ class JobsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           'Jobs',
         ),
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add, color: Colors.white),
             onPressed: () => EditJobPage.show(
               context,
               database: Provider.of<Database>(context),
-            ),
-          ),
-          FlatButton(
-            onPressed: () {
-              _confirmSignOut(context);
-            },
-            child: Text(
-              'Log Out',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-              ),
             ),
           ),
         ],
