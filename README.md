@@ -33,6 +33,10 @@ Packages Name        | Usage
 |[flutter_facebook_login](https://pub.dev/packages/flutter_facebook_login) | Facebook Login
 |[provider](https://pub.dev/packages/provider)| State Management
 |[cloud_firestore](https://pub.dev/packages/cloud_firestore) | Flutter plugin for Cloud Firestore
-|[rxdart](https://pub.dev/packages/rxdart) |  Adds additional capabilities to Dart Streams and StreamControllers.
+|[rxdart](https://pub.dev/packages/rxdart) |  Adds additional capabilities to Dart Streams and StreamControllers
 |[intl](https://pub.dev/packages/intl) | Datetime Handling
 
+## 🤝 Contributions
+
+Contributions, issues and feature requests are welcome !
+Feel free to check.
