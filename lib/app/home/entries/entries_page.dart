@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:time_tracker_flutter_course/app/home/entries/entries_bloc.dart';
-import 'package:time_tracker_flutter_course/app/home/entries/entries_list_tile.dart';
-import 'package:time_tracker_flutter_course/app/home/jobs/list_items_builder.dart';
-import 'package:time_tracker_flutter_course/services/database.dart';
+import 'package:time_tracker_app/app/home/entries/entries_bloc.dart';
+import 'package:time_tracker_app/app/home/entries/entries_list_tile.dart';
+import 'package:time_tracker_app/app/home/jobs/list_items_builder.dart';
+import 'package:time_tracker_app/services/database.dart';
 
 class EntriesPage extends StatelessWidget {
   static Widget create(BuildContext context) {
     final database = Provider.of<Database>(context);
     return Provider<EntriesBloc>(
-      builder: (_) => EntriesBloc(database: database),
+      create: (_) => EntriesBloc(database: database),
       child: EntriesPage(),
     );
   }
@@ -19,6 +19,7 @@ class EntriesPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Entries'),
+        centerTitle: true,
         elevation: 2.0,
       ),
       body: _buildContents(context),

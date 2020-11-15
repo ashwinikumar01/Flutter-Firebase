@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:time_tracker_flutter_course/app/home/entries/entry_job.dart';
+import 'package:time_tracker_app/app/home/entries/entry_job.dart';
 
 /// Temporary model class to store the time tracked and pay for a job
 class JobDetails {
