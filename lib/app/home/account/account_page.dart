@@ -27,9 +27,11 @@ class AccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Account'),
+        centerTitle: true,
         actions: <Widget>[
           FlatButton(
             onPressed: () => _confirmSignOut(context),
