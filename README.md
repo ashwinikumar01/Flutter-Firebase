@@ -15,8 +15,8 @@ tracking information in firestore.
 
 ## 🕓 Features:
 
-✅ Firebase Authentication (anonymous, email & password, Google, Facebook)
-✅ Streams, building reactive apps & advanced stream operations with RxDart
+- ✅ Firebase Authentication (anonymous, email & password, Google, Facebook)
+- ✅ Streams, building reactive apps & advanced stream operations with RxDart
 
 
 
